@@ -8,6 +8,8 @@
 
 ---
 
+<img src="./public/scn-1.0.0.png"/>
+
 ## Installation
 
 ```bash
