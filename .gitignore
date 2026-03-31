@@ -1,5 +1,8 @@
-# Object file
-*.o
-
-# Ada Library Information
-*.ali
+node_modules/
+dist/
+*.js.map
+*.d.ts.map
+coverage/
+.DS_Store
+Thumbs.db
+.env
