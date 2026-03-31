@@ -1,0 +1,83 @@
+{
+  "name": "blackvideo-extension-engine",
+  "version": "1.0.0",
+  "description": "Official CLI scaffolding engine for BlackVideo extensions — create, validate, build, and publish extensions for the BlackVideo ecosystem.",
+  "author": "BlackBlazent <blackblazent@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/BlackBlazent/blackvideo-extensions-engine#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BlackBlazent/blackvideo-extensions-engine.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BlackBlazent/blackvideo-extensions-engine/issues"
+  },
+  "keywords": [
+    "blackvideo",
+    "extension",
+    "cli",
+    "scaffold",
+    "generator",
+    "tauri",
+    "video",
+    "media",
+    "plugin",
+    "blackblazent"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "bin": {
+    "blackvideo-ext": "./bin/blackvideo-ext.js",
+    "bv-ext": "./bin/blackvideo-ext.js",
+    "bvx": "./bin/blackvideo-ext.js"
+  },
+  "files": [
+    "bin/",
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
+    "lint": "eslint src --ext .ts",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "chalk": "^5.6.2",
+    "chokidar": "^5.0.0",
+    "commander": "^12.1.0",
+    "enquirer": "^2.4.1",
+    "figlet": "^1.7.0",
+    "fs-extra": "^11.2.0",
+    "gradient-string": "^2.0.2",
+    "ora": "^8.1.1",
+    "semver": "^7.6.3",
+    "validate-npm-package-name": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/archiver": "^7.0.0",
+    "@types/chokidar": "^2.1.7",
+    "@types/figlet": "^1.5.8",
+    "@types/fs-extra": "^11.0.4",
+    "@types/gradient-string": "^1.1.6",
+    "@types/node": "^20.14.0",
+    "@types/semver": "^7.5.8",
+    "@types/validate-npm-package-name": "^4.0.2",
+    "typescript": "^5.5.0"
+  }
+}

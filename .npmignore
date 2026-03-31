@@ -1,0 +1,24 @@
+# Source — only dist/ ships to npm
+src/
+*.ts
+!dist/**/*.d.ts
+
+# Dev files
+.github/
+.vscode/
+node_modules/
+__docs__/
+coverage/
+__tests__/
+*.test.ts
+*.spec.ts
+
+# Config
+tsconfig.json
+.eslintrc*
+.prettierrc*
+jest.config*
+
+# Git
+.git/
+.gitignore
