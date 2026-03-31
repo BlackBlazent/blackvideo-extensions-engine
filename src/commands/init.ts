@@ -7,16 +7,18 @@
  */
 
 import path          from 'path';
-import { prompt }    from 'enquirer';
+// import { prompt }    from 'enquirer';
+import pkg from 'enquirer';
 import ora           from 'ora';
 import chalk         from 'chalk';
 import { existsSync } from 'fs';
-
 import { log }               from '../utils/logger.js';
 import { scaffoldExtension } from '../generators/scaffold.js';
 import { validateManifest }  from '../validators/manifest.validator.js';
 import type { TemplateContext } from '../generators/templates.js';
 import type { ExtensionType, LicenseModel } from '../validators/manifest.validator.js';
+
+const { prompt } = pkg;
 
 // ─────────────────────────────────────────────────────────────
 //  Helpers
