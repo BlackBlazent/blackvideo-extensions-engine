@@ -7,6 +7,7 @@
  */
 
 import path from 'path';
+import fs   from 'fs';
 import { writeFile, writeJson, ensureDir } from '../utils/fs.js';
 import { log } from '../utils/logger.js';
 import type { TemplateContext } from './templates.js';
@@ -48,20 +49,14 @@ export async function scaffoldExtension(
   await writeFile(p('.blackvideoignore'),             tBlackvideoIgnore());
   await writeFile(p('index.ts'),                     tIndex(ctx));
 
-  // Placeholder icon (1×1 transparent PNG — developer replaces with real icon)
+  // Placeholder icon — 1×1 transparent PNG, developer replaces with real 256×256 icon
   const PLACEHOLDER_PNG = Buffer.from(
     'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
     'base64'
   );
-  const { createWriteStream } = await import('fs');
   const iconOut = p('icon.png');
-  await new Promise<void>((resolve, reject) => {
-    const ws = createWriteStream(iconOut);
-    ws.write(PLACEHOLDER_PNG);
-    ws.end();
-    ws.on('finish', resolve);
-    ws.on('error', reject);
-  });
+  fs.mkdirSync(path.dirname(iconOut), { recursive: true });
+  fs.writeFileSync(iconOut, PLACEHOLDER_PNG);
   log.create(path.relative(process.cwd(), iconOut));
 
   // ── Config files ───────────────────────────────────────────
