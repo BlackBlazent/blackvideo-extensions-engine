@@ -6,17 +6,17 @@
  * Interactively scaffolds a new BlackVideo extension project.
  */
 
-import path          from 'path';
-// import { prompt }    from 'enquirer';
-import pkg from 'enquirer';
-import ora           from 'ora';
-import chalk         from 'chalk';
+import path           from 'path';
+import pkg            from 'enquirer';
+import ora            from 'ora';
+import chalk          from 'chalk';
 import { existsSync } from 'fs';
+
 import { log }               from '../utils/logger.js';
 import { scaffoldExtension } from '../generators/scaffold.js';
 import { validateManifest }  from '../validators/manifest.validator.js';
 import type { TemplateContext } from '../generators/templates.js';
-import type { ExtensionType, LicenseModel } from '../validators/manifest.validator.js';
+import type { ExtensionType, LicenseModel, ExtensionManifest } from '../validators/manifest.validator.js';
 
 const { prompt } = pkg;
 
@@ -36,6 +36,38 @@ function toAuthorClass(name: string): string {
   return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 }
 
+/**
+ * Build a complete ExtensionManifest from a TemplateContext.
+ * TemplateContext only has user-supplied fields (id, displayName, author, etc).
+ * The manifest also needs 'name', 'icon', 'entry', 'permissions' which have
+ * fixed defaults — this function fills them in so the validator sees a full object.
+ */
+function buildManifestFromCtx(ctx: TemplateContext): ExtensionManifest {
+  return {
+    id:            ctx.id,
+    name:          ctx.id,
+    displayName:   ctx.displayName,
+    description:   ctx.description,
+    version:       ctx.version,
+    author:        ctx.author,
+    authorClass:   ctx.authorClass,
+    type:          ctx.type,
+    license:       ctx.license,
+    icon:          'icon.png',
+    entry:         'index.ts',
+    uiEntry:       'src/components/extension.container.card',
+    permissions:   [
+      {
+        scope:  'playback.read',
+        reason: `${ctx.displayName} reads current playback state to provide its functionality`,
+      },
+    ],
+    playbackHooks: ctx.playbackHooks,
+    uiSupport:     ctx.uiSupport,
+    cliSupport:    ctx.cliSupport,
+  };
+}
+
 // ─────────────────────────────────────────────────────────────
 //  Command
 // ─────────────────────────────────────────────────────────────
@@ -43,8 +75,6 @@ function toAuthorClass(name: string): string {
 export async function cmdInit(nameArg?: string): Promise<void> {
   log.blank();
   log.title('Create a new BlackVideo Extension');
-
-  // ── Step 1: id ───────────────────────────────────────────
 
   const { id } = await prompt<{ id: string }>({
     type:     'input',
@@ -58,16 +88,12 @@ export async function cmdInit(nameArg?: string): Promise<void> {
     },
   });
 
-  // ── Step 2: displayName ──────────────────────────────────
-
   const { displayName } = await prompt<{ displayName: string }>({
     type:    'input',
     name:    'displayName',
     message: 'Display name',
     initial: toDisplayName(id),
   });
-
-  // ── Step 3: description ──────────────────────────────────
 
   const { description } = await prompt<{ description: string }>({
     type:     'input',
@@ -76,16 +102,12 @@ export async function cmdInit(nameArg?: string): Promise<void> {
     validate: (v: string) => v.trim().length >= 10 || 'Must be at least 10 characters',
   });
 
-  // ── Step 4: author ───────────────────────────────────────
-
   const { author } = await prompt<{ author: string }>({
     type:     'input',
     name:     'author',
     message:  'Author name',
     validate: (v: string) => !!v.trim() || 'Author is required',
   });
-
-  // ── Step 5: version ──────────────────────────────────────
 
   const { version } = await prompt<{ version: string }>({
     type:     'input',
@@ -94,8 +116,6 @@ export async function cmdInit(nameArg?: string): Promise<void> {
     initial:  '1.0.0',
     validate: (v: string) => /^\d+\.\d+\.\d+/.test(v) || 'Must be semver (e.g. 1.0.0)',
   });
-
-  // ── Step 6: type ─────────────────────────────────────────
 
   const { type } = await prompt<{ type: ExtensionType }>({
     type:    'select',
@@ -111,8 +131,6 @@ export async function cmdInit(nameArg?: string): Promise<void> {
     ],
   } as any);
 
-  // ── Step 7: license ──────────────────────────────────────
-
   const { license } = await prompt<{ license: LicenseModel }>({
     type:    'select',
     name:    'license',
@@ -125,8 +143,6 @@ export async function cmdInit(nameArg?: string): Promise<void> {
       { name: 'internal',     message: 'Internal       — Private / in-house use'   },
     ],
   } as any);
-
-  // ── Step 8: feature toggles ──────────────────────────────
 
   const { playbackHooks } = await prompt<{ playbackHooks: boolean }>({
     type:    'confirm',
@@ -148,8 +164,6 @@ export async function cmdInit(nameArg?: string): Promise<void> {
     message: 'Enable CLI support? (cli.extension.runner.ts)',
     initial: false,
   } as any);
-
-  // ── Step 9: output directory ─────────────────────────────
 
   const { outputDir } = await prompt<{ outputDir: string }>({
     type:    'input',
@@ -173,8 +187,6 @@ export async function cmdInit(nameArg?: string): Promise<void> {
     }
   }
 
-  // ── Build context ────────────────────────────────────────
-
   const ctx: TemplateContext = {
     id,
     displayName,
@@ -189,9 +201,12 @@ export async function cmdInit(nameArg?: string): Promise<void> {
     cliSupport,
   };
 
-  // ── Validate before writing ──────────────────────────────
+  // Build the full manifest before validating so 'name', 'icon',
+  // 'entry', 'permissions' are present — these are manifest-level
+  // defaults not collected from the user prompt.
+  const manifest = buildManifestFromCtx(ctx);
+  const result   = validateManifest(manifest);
 
-  const result = validateManifest(ctx as any);
   if (!result.valid) {
     log.blank();
     log.error('Manifest validation failed:');
@@ -200,11 +215,9 @@ export async function cmdInit(nameArg?: string): Promise<void> {
   }
   result.warnings.forEach(w => log.warn(w));
 
-  // ── Scaffold ─────────────────────────────────────────────
-
   log.blank();
   const spinner = ora({
-    text:    chalk.cyan(`Scaffolding ${chalk.bold(displayName)}…`),
+    text:    chalk.cyan(`Scaffolding ${chalk.bold(displayName)}...`),
     spinner: 'dots',
     color:   'cyan',
   }).start();
@@ -217,8 +230,6 @@ export async function cmdInit(nameArg?: string): Promise<void> {
     log.error(String(err));
     process.exit(1);
   }
-
-  // ── Done ─────────────────────────────────────────────────
 
   log.blank();
   log.divider();
