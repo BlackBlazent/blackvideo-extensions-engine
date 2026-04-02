@@ -1,0 +1,53 @@
+version: 2
+updates:
+  # Production dependencies - more frequent updates for stability
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    open-pull-requests-limit: 5
+    rebase-strategy: "auto"
+    labels:
+      - "dependencies"
+      - "production"
+    allow:
+      - dependency-type: "production"
+
+  # Development dependencies - can be updated less frequently
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+      day: "friday"
+      time: "09:00"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    open-pull-requests-limit: 3
+    rebase-strategy: "auto"
+    labels:
+      - "dependencies"
+      - "development"
+    allow:
+      - dependency-type: "development"
+
+  # GitHub Actions - if you add workflows later
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    open-pull-requests-limit: 3
+    rebase-strategy: "auto"
+    labels:
+      - "github-actions"
+      - "ci"
