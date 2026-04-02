@@ -8,7 +8,7 @@
 
 ---
 
-<img src="./public/scn-1.0.0.png"/>
+<img src="https://github.com/BlackBlazent/blackvideo-extensions-engine/blob/main/public/scn-1.0.0.png?raw=true"/>
 
 ## Installation
 
@@ -232,86 +232,6 @@ extension.modalFrame.ui.tsx
 ```
 
 The `manifest.json` schema, allowed permission scopes, and blocked combinations are **identical** between this CLI and `extension.server.verified.ts` in the BlackVideo app. Any extension that passes `bvx validate` will pass in-app verification.
-
----
-
-## Publishing to npm Registry
-
-### 1. Create an npm account
-
-```bash
-npm login
-# Enter username, password, email
-```
-
-### 2. Check the package name is available
-
-```bash
-npm search blackvideo-extension-engine
-```
-
-### 3. Set up the repository
-
-```bash
-git init
-git remote add origin https://github.com/BlackBlazent/blackvideo-extensions-engine.git
-git add .
-git commit -m "feat: initial release v1.0.0"
-git tag v1.0.0
-git push origin main --tags
-```
-
-### 4. Build before publishing
-
-```bash
-npm run build
-```
-
-### 5. Dry run (verify what gets published)
-
-```bash
-npm publish --dry-run
-```
-
-Check that only the `bin/`, `dist/`, `README.md`, and `LICENSE` files are included.
-
-### 6. Publish
-
-```bash
-npm publish --access public
-```
-
-### 7. Verify
-
-```bash
-npm info blackvideo-extension-engine
-```
-
-### 8. Subsequent releases
-
-```bash
-# Bump version
-npm version patch   # 1.0.0 → 1.0.1
-npm version minor   # 1.0.0 → 1.1.0
-npm version major   # 1.0.0 → 2.0.0
-
-# Build + publish
-npm run build
-npm publish --access public
-```
-
-### Scoped package (optional)
-
-If you want to publish under the `@blackblazent` scope:
-
-```bash
-# Change name in package.json to:
-# "name": "@blackblazent/blackvideo-extension-engine"
-
-npm publish --access public
-# Install:
-npm install -g @blackblazent/blackvideo-extension-engine
-```
 
 ---
 
