@@ -4,6 +4,7 @@ dist/
 *.d.ts.map
 coverage/
 temp/
+__docs__/
 backup/
 .DS_Store
 Thumbs.db
