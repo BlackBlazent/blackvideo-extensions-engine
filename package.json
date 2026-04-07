@@ -1,5 +1,5 @@
 {
-  "name": "blackvideo-extension-engine",
+  "name": "@BlackBlazent/blackvideo-extension-engine",
   "version": "1.0.2",
   "description": "Official CLI scaffolding engine for BlackVideo extensions — create, validate, build, and publish extensions for the BlackVideo ecosystem.",
   "author": "BlackBlazent <blackblazent@gmail.com>",
@@ -8,6 +8,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/BlackBlazent/blackvideo-extensions-engine.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "bugs": {
     "url": "https://github.com/BlackBlazent/blackvideo-extensions-engine/issues"
