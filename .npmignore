@@ -7,8 +7,10 @@ src/
 .github/
 .vscode/
 node_modules/
+AUTHORS
 temp/
 __docs__/
+backup/
 errors/
 coverage/
 __tests__/
